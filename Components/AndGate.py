@@ -2,9 +2,10 @@ from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 from GUI.GridScene import GridScene
+from Components.Comp import Comp
 
-class AndGate(QGraphicsPathItem):
-    def __init__(self, x, y, w=60, h=40):
+class AndGate(QGraphicsPathItem, Comp):
+    def __init__(self, x, y, w=50, h=40):
         super().__init__()
 
         self.setFlags(
@@ -35,6 +36,6 @@ class AndGate(QGraphicsPathItem):
                 if scene is not None:
                     for view in scene.views():
                         view.viewport().update()
-                        
+
                 return snapped_pos
         return super().itemChange(change, value)

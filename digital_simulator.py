@@ -7,6 +7,7 @@ import sys
 # Custom class imports
 from GUI.GridScene import GridScene
 from GUI.ConfiguredView import ConfiguredView
+from GUI.LeftDock import LeftDock
 from Components.AndGate import AndGate
 
 class MainWindow(QMainWindow):
@@ -23,9 +24,9 @@ class MainWindow(QMainWindow):
         self.view = ConfiguredView(self.scene)
         self.setCentralWidget(self.view)
 
-        # Create test component and add to the scene
-        self.comp = AndGate(100, 100, 50, 50)
-        self.scene.addItem(self.comp)
+        # Left Dock (Shapes)
+        self.left_dock = LeftDock(self, self.scene, self.view)
+        self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, self.left_dock)
 
 # Application main entry point
 if __name__ == "__main__":
