@@ -6,6 +6,7 @@ import sys
 
 # Custom class imports
 from GUI.GridScene import GridScene
+from GUI.ConfiguredView import ConfiguredView
 from Components.AndGate import AndGate
 
 class MainWindow(QMainWindow):
@@ -19,12 +20,10 @@ class MainWindow(QMainWindow):
         self.scene.setSceneRect(0, 0, 1000, 500)
 
         # Create the view
-        self.view = QGraphicsView(self.scene, self)
-        self.view.setRenderHint(QPainter.RenderHint.Antialiasing)
-        self.view.setRenderHint(QPainter.RenderHint.SmoothPixmapTransform)
-        self.view.setDragMode(QGraphicsView.DragMode.RubberBandDrag)
+        self.view = ConfiguredView(self.scene)
         self.setCentralWidget(self.view)
 
+        # Create test component and add to the scene
         self.comp = AndGate(100, 100, 50, 50)
         self.scene.addItem(self.comp)
 
