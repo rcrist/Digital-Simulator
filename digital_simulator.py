@@ -5,7 +5,8 @@ from PyQt6.QtGui import *
 import sys
 
 # Custom class imports
-from Components.And import AndGate
+from GUI.GridScene import GridScene
+from Components.AndGate import AndGate
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -14,7 +15,7 @@ class MainWindow(QMainWindow):
         self.setGeometry(200, 100, 1200, 600)
 
         # Create the Scene
-        self.scene = QGraphicsScene(self)
+        self.scene = GridScene(self)
         self.scene.setSceneRect(0, 0, 1000, 500)
 
         # Create the view

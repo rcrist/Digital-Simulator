@@ -1,6 +1,7 @@
 from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
+from GUI.GridScene import GridScene
 
 class AndGate(QGraphicsPathItem):
     def __init__(self, x, y, w=60, h=40):
@@ -25,10 +26,15 @@ class AndGate(QGraphicsPathItem):
 
     def itemChange(self, change, value):
         if change == QGraphicsItem.GraphicsItemChange.ItemPositionChange:
-            # Force the view to update to prevent artifacts
-            scene = self.scene()
-            if scene is not None:
-                for view in scene.views():
-                    view.viewport().update()
-            return value
+                # Extract x and y from value (which is a QPointF)
+                snapped_point = GridScene.snap_to_grid(value.x(), value.y())
+                snapped_pos = QPointF(snapped_point[0], snapped_point[1])
+
+                # Force the view to update to prevent artifacts
+                scene = self.scene()
+                if scene is not None:
+                    for view in scene.views():
+                        view.viewport().update()
+                        
+                return snapped_pos
         return super().itemChange(change, value)
