@@ -4,38 +4,47 @@ from PyQt6.QtGui import *
 from GUI.GridScene import GridScene
 from Components.Comp import Comp
 
-class AndGate(QGraphicsPathItem, Comp):
-    def __init__(self, x, y, w=50, h=40):
+class AndGate(QGraphicsItem, Comp):
+    def __init__(self, x, y, w=40, h=40):
         super().__init__()
-
         self.setFlags(
             QGraphicsItem.GraphicsItemFlag.ItemIsMovable |
             QGraphicsItem.GraphicsItemFlag.ItemIsSelectable |
             QGraphicsItem.GraphicsItemFlag.ItemSendsGeometryChanges
         )
+        self.rect = QRectF(x, y, w, h)
+        self.image = QPixmap("Images/and_gate_32x32_white.png")
+        if self.image.isNull():
+            print("Failed to load image: Images/and_gate_32x32_white.png")
 
-        path = QPainterPath()
-        # Start at top-left
-        path.moveTo(x, y)
-        path.lineTo(x, y + h)
-        path.lineTo(x + w / 2, y + h)
-        path.arcTo(x + w / 2, y, w / 2, h, 270, 180)
-        path.lineTo(x, y)
-        self.setPath(path)
-        # Set pen color to white
-        self.setPen(QPen(Qt.GlobalColor.white, 1))
+    def boundingRect(self):
+        return self.rect
+
+    def paint(self, painter, option, widget):
+        # Draw rectangle
+        painter.setPen(QPen(Qt.GlobalColor.white, 1))
+        painter.setBrush(QBrush(Qt.GlobalColor.black))
+        painter.drawRect(self.rect)
+
+        # Draw AND gate image centered in the rectangle
+        img_x = self.rect.x() + (self.rect.width() - 32) / 2
+        img_y = self.rect.y() + (self.rect.height() - 32) / 2
+        painter.drawPixmap(int(img_x), int(img_y), 32, 32, self.image)
+
+        # Draw three circles (inputs/outputs)
+        painter.setBrush(QBrush(Qt.GlobalColor.white))
+        painter.setPen(QPen(Qt.GlobalColor.white))
+        painter.drawEllipse(QPointF(self.rect.x(), self.rect.y() + 10), 3, 3)
+        painter.drawEllipse(QPointF(self.rect.x(), self.rect.y() + 30), 3, 3)
+        painter.drawEllipse(QPointF(self.rect.x() + self.rect.width(), self.rect.y() + 20), 3, 3)
 
     def itemChange(self, change, value):
         if change == QGraphicsItem.GraphicsItemChange.ItemPositionChange:
-                # Extract x and y from value (which is a QPointF)
-                snapped_point = GridScene.snap_to_grid(value.x(), value.y())
-                snapped_pos = QPointF(snapped_point[0], snapped_point[1])
-
-                # Force the view to update to prevent artifacts
-                scene = self.scene()
-                if scene is not None:
-                    for view in scene.views():
-                        view.viewport().update()
-
-                return snapped_pos
+            snapped_point = GridScene.snap_to_grid(value.x(), value.y())
+            snapped_pos = QPointF(snapped_point[0], snapped_point[1])
+            scene = self.scene()
+            if scene is not None:
+                for view in scene.views():
+                    view.viewport().update()
+            return snapped_pos
         return super().itemChange(change, value)

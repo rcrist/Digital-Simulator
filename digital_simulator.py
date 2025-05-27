@@ -8,7 +8,6 @@ import sys
 from GUI.GridScene import GridScene
 from GUI.ConfiguredView import ConfiguredView
 from GUI.LeftDock import LeftDock
-from Components.AndGate import AndGate
 
 class MainWindow(QMainWindow):
     def __init__(self):
