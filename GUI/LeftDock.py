@@ -8,6 +8,7 @@ class LeftDock(QDockWidget):
     def __init__(self, parent=None, scene=None, view=None):
         super().__init__("Components", parent)
         self.setAllowedAreas(Qt.DockWidgetArea.LeftDockWidgetArea)
+        self.setMinimumWidth(150)
         self.scene = scene
         self.view = view
         self.main_widget = QWidget()
@@ -34,6 +35,7 @@ class LeftDock(QDockWidget):
 
         if shape_type in shape_map:
             shape_class, args = shape_map[shape_type]
-            item = shape_class(*args)
+            item = shape_class(0, 0)
+            item.setPos(100, 50) 
             self.scene.addItem(item)
             item.setSelected(True)
