@@ -7,6 +7,7 @@ import sys
 # Custom class imports
 from GUI.GridScene import GridScene
 from GUI.AppView import AppView
+from GUI.TopMenu import TopMenu
 from GUI.LeftDock import LeftDock
 from GUI.RightDock import RightDock
 
@@ -24,6 +25,11 @@ class MainWindow(QMainWindow):
         self.view = AppView(self.scene)
         self.setCentralWidget(self.view)
 
+        # Add MenuBar
+        self.menu_bar = TopMenu(self, self.scene, self.view)
+        self.setMenuBar(self.menu_bar)
+        self.menu_bar.apply_dark_theme()
+
         # Ensure the canvas origin is at the top-left of the view
         self.view.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
         self.view.centerOn(0, 0)
@@ -35,7 +41,7 @@ class MainWindow(QMainWindow):
         # Right Dock (Properties)
         self.right_dock = RightDock(self, self.scene, self.view)
         self.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self.right_dock)
-        
+
 # Application main entry point
 if __name__ == "__main__":
     app = QApplication(sys.argv)
