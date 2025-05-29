@@ -4,6 +4,9 @@ from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 import sys
 
+# Importing custom QGraphicsItems here
+from Components.Comp import Comp
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -23,10 +26,9 @@ class MainWindow(QMainWindow):
         self.view.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
         self.view.centerOn(0, 0)
 
-        # Add text to the scene
-        text_item = self.scene.addText("Starting Over!")
-        font = QFont("Arial", 32, QFont.Weight.Bold)
-        text_item.setFont(font)
+        # Example: Add a Comp instance to a QGraphicsScene
+        comp = Comp()
+        self.scene.addItem(comp)
 
 # Application main entry point
 if __name__ == "__main__":
