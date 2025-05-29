@@ -5,10 +5,10 @@ __pycache__/
 *.pyo
 *.pyd
 
-# Ignore VSCode settings (optional)
+# Ignore VSCode settings
 .vscode/
 
-# Ignore environment folders (optional)
+# Ignore environment folders
 env/
 .venv/
 venv/
