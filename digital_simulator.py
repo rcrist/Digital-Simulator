@@ -1,56 +1,76 @@
-# PyQt6 & system imports
 from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 import sys
 
-# Importing custom QGraphicsItems here
-from GUI.LeftDock import LeftDock
-from GUI.RightDock import RightDock
-from Components.Comp import Comp
-from Components.AndGate import AndGate
+from GUI.grid import draw_grid
+from GUI.led_widget import LEDWidget
+from GUI.properties_dock import PropertiesDock
+from GUI.comp_dock import ComponentDock
+from GUI.menu_bar import MenuBar
+from Components.and_gate import AndGate
+
+class GridScene(QGraphicsScene):
+    """ Custom QGraphicsScene that draws a grid in the background. """
+    def drawBackground(self, painter, rect):
+        super().drawBackground(painter, rect)
+        draw_grid(painter, rect)  # Call your grid drawing function
 
 class MainWindow(QMainWindow):
+    """ Main application window for the gate simulator. """
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Digital Simulator")
-        self.setGeometry(200, 100, 1200, 600) # x, y, width, height
+        self.setWindowTitle("Component Editor")
+        self.setGeometry(400, 200, 800, 400)
 
-        # Create the Scene
-        self.scene = QGraphicsScene(self)
-        self.scene.setSceneRect(0, 0, 1000, 500)
-
-        # Create the view
+        self.scene = GridScene()
         self.view = QGraphicsView(self.scene)
-        self.setCentralWidget(self.view)
         self.view.setRenderHint(QPainter.RenderHint.Antialiasing)
+        self.view.setSceneRect(0, 0, 1400, 600)
+        self.setCentralWidget(self.view)
 
-        # Ensure the canvas origin is at the top-left of the view
-        self.view.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
-        self.view.centerOn(0, 0)
+        # Create and set the menu bar
+        self.menu_bar = MenuBar(self)
+        self.setMenuBar(self.menu_bar)
 
-        # Create the left dock with component buttons
-        self.left_dock = LeftDock(self, self.scene)
-        self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, self.left_dock)
+        # Create and set the component dock
+        self.component_dock = ComponentDock(self, self.scene)
+        self.component_dock.setObjectName("ComponentDock")
+        self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, self.component_dock)
+        self.component_dock.setMinimumWidth(150)
 
-        # Create the right dock for properties
-        self.right_dock = RightDock(self)
-        self.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self.right_dock)
+        # Create and set the properties dock
+        self.properties_dock = PropertiesDock(self, self.scene)
+        self.properties_dock.setObjectName("PropertiesDock")
+        self.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self.properties_dock)
+        self.properties_dock.setMinimumWidth(200)
 
-        # Test new components here
-        # comp = AndGate()
-        # self.scene.addItem(comp)
-
-        # Connect selection change to update properties panel
+        # Connect selection change to show/hide controls
         self.scene.selectionChanged.connect(self.on_selection_changed)
 
-    def on_selection_changed(self):
-        selected_items = self.scene.selectedItems()
-        if selected_items:
-            self.right_dock.set_controls(selected_items[0])
+        # self.gate = AndGate()
+        # self.gate.setPos(100, 100)
+        # self.scene.addItem(self.gate)
 
-# Application main entry point
+    def closeEvent(self, event):
+        try:
+            self.scene.selectionChanged.disconnect(self.on_selection_changed)
+        except Exception:
+            pass
+        super().closeEvent(event)
+
+    def on_selection_changed(self):
+        """Show controls if a component is selected, hide if not."""
+        if hasattr(self, "scene") and self.scene is not None:
+            try:
+                selected = self.scene.selectedItems()
+                self.properties_dock.show_controls(bool(selected), selected[0] if selected else None)
+            except RuntimeError:
+                # Scene has been deleted, ignore
+                pass
+
 if __name__ == "__main__":
+    """ Main entry point for the application. """
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()
