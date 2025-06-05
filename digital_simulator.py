@@ -3,18 +3,10 @@ from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 import sys
 
-from GUI.grid import draw_grid
-from GUI.led_widget import LEDWidget
+from GUI.grid_scene import GridScene
 from GUI.properties_dock import PropertiesDock
 from GUI.comp_dock import ComponentDock
 from GUI.menu_bar import MenuBar
-from Components.and_gate import AndGate
-
-class GridScene(QGraphicsScene):
-    """ Custom QGraphicsScene that draws a grid in the background. """
-    def drawBackground(self, painter, rect):
-        super().drawBackground(painter, rect)
-        draw_grid(painter, rect)  # Call your grid drawing function
 
 class MainWindow(QMainWindow):
     """ Main application window for the gate simulator. """
@@ -29,17 +21,17 @@ class MainWindow(QMainWindow):
         self.view.setSceneRect(0, 0, 1400, 600)
         self.setCentralWidget(self.view)
 
-        # Create and set the menu bar
+        # Create the menu bar
         self.menu_bar = MenuBar(self)
         self.setMenuBar(self.menu_bar)
 
-        # Create and set the component dock
+        # Create the component dock
         self.component_dock = ComponentDock(self, self.scene)
         self.component_dock.setObjectName("ComponentDock")
         self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, self.component_dock)
         self.component_dock.setMinimumWidth(150)
 
-        # Create and set the properties dock
+        # Create the properties dock
         self.properties_dock = PropertiesDock(self, self.scene)
         self.properties_dock.setObjectName("PropertiesDock")
         self.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self.properties_dock)
@@ -47,10 +39,6 @@ class MainWindow(QMainWindow):
 
         # Connect selection change to show/hide controls
         self.scene.selectionChanged.connect(self.on_selection_changed)
-
-        # self.gate = AndGate()
-        # self.gate.setPos(100, 100)
-        # self.scene.addItem(self.gate)
 
     def closeEvent(self, event):
         try:
