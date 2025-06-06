@@ -8,6 +8,8 @@ from GUI.properties_dock import PropertiesDock
 from GUI.comp_dock import ComponentDock
 from GUI.menu_bar import MenuBar
 
+from Components.slider_switch import SliderSwitch
+
 class MainWindow(QMainWindow):
     """ Main application window for the gate simulator. """
     def __init__(self):
@@ -39,6 +41,11 @@ class MainWindow(QMainWindow):
 
         # Connect selection change to show/hide controls
         self.scene.selectionChanged.connect(self.on_selection_changed)
+
+        # Test component
+        self.test_component = SliderSwitch()
+        self.test_component.setPos(100, 100)
+        self.scene.addItem(self.test_component)
 
     def closeEvent(self, event):
         try:

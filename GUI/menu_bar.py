@@ -12,6 +12,8 @@ from Components.nor_gate import NorGate
 from Components.xor_gate import XorGate
 from Components.xnor_gate import XnorGate
 from Components.wire import Wire
+from Components.dip_switch import DipSwitch
+from Components.led import LED
 from GUI.grid import set_grid_color
 
 class MenuBar(QMenuBar):
@@ -38,6 +40,11 @@ class MenuBar(QMenuBar):
         toggle_grid_action.triggered.connect(self.toggle_grid)
         toggle_theme_action = settings_menu.addAction("Toggle Theme")
         toggle_theme_action.triggered.connect(self.toggle_theme)
+
+        # Help Menu
+        help_menu = self.addMenu("Help")
+        about_action = help_menu.addAction("About")
+        about_action.triggered.connect(self.show_about_dialog)
 
         self.apply_dark_theme()
 
@@ -203,6 +210,10 @@ class MenuBar(QMenuBar):
             return item.to_dict()
         if isinstance(item, Wire):
             return item.to_dict()
+        if isinstance(item, DipSwitch):
+            return item.to_dict()
+        if isinstance(item, LED):
+            return item.to_dict()
         return None
 
     def deserialize_item(self, data):
@@ -225,6 +236,10 @@ class MenuBar(QMenuBar):
             return XnorGate.from_dict(data)
         if t == "wire":
             return Wire.from_dict(data)
+        if t == "dip_switch":
+            return DipSwitch.from_dict(data)
+        if t == "led":
+            return LED.from_dict(data)
         return None
 
     def print_diagram(self):
@@ -274,3 +289,13 @@ class MenuBar(QMenuBar):
         # Restore grid visibility
         if old_grid_enabled is not None:
             grid_module.GRID_ENABLED = old_grid_enabled
+
+    def show_about_dialog(self):
+        QMessageBox.about(
+            self,
+            "Digital Simulator",
+            "<b>Digital Simulator Tool</b><br>"
+            "Version 1.0<br><br>"
+            "A simple digital logic simulator.<br>"
+            "Created with Python andPyQt6."
+        )

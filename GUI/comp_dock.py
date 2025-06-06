@@ -9,6 +9,8 @@ from Components.nand_gate import NandGate
 from Components.nor_gate import NorGate
 from Components.xor_gate import XorGate
 from Components.xnor_gate import XnorGate
+from Components.dip_switch import DipSwitch
+from Components.led import LED
 
 class ComponentDock(QDockWidget):
     """ Component widget for selecting and displaying components """
@@ -32,7 +34,7 @@ class ComponentDock(QDockWidget):
 
         # Add gate buttons
         self.gate_buttons = {}
-        gates = ["And", "Or", "Not", "Nand", "Nor", "Xor", "Xnor"]
+        gates = ["And", "Or", "Not", "Nand", "Nor", "Xor", "Xnor", "Dip Switch", "LED"]
         for gate in gates:
             btn = QPushButton(gate)
             btn.clicked.connect(lambda checked, g=gate: self.add_gate(g))
@@ -60,6 +62,10 @@ class ComponentDock(QDockWidget):
                 gate = XorGate()
             elif gate_type == "Xnor":
                 gate = XnorGate()
+            elif gate_type == "Dip Switch":
+                gate = DipSwitch()
+            elif gate_type == "LED":
+                gate = LED()
             else:
                 return
 

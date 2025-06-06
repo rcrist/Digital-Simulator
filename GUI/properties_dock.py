@@ -51,6 +51,16 @@ class PropertiesDock(QDockWidget):
         self.leds_layout = QVBoxLayout(self.leds_container)
         self.layout.addWidget(self.leds_container)
 
+        # Add LED color selector (hidden by default)
+        self.led_color_title = QLabel("LED Color")
+        self.led_color_combo = QComboBox()
+        self.led_color_combo.addItems(["red", "green", "yellow", "blue"])
+        self.layout.addWidget(self.led_color_title)
+        self.layout.addWidget(self.led_color_combo)
+        self.led_color_title.setVisible(False)
+        self.led_color_combo.setVisible(False)
+        self.led_color_combo.currentTextChanged.connect(self.change_led_color)
+
         self.layout.addStretch()
 
         self.setWidget(self.properties_widget)
@@ -104,8 +114,29 @@ class PropertiesDock(QDockWidget):
             if child.widget():
                 child.widget().deleteLater()
 
+        # Hide color selector by default
+        self.led_color_title.setVisible(False)
+        self.led_color_combo.setVisible(False)
+
         if selected:
             self.type_label.setText(f"Type: {type(selected).__name__}")
+
+            # Show color selector if LED
+            if type(selected).__name__ == "LED":
+                self.led_color_title.setVisible(True)
+                self.led_color_combo.setVisible(True)
+                # Set combo to current color
+                if hasattr(selected, "led_color"):
+                    idx = self.led_color_combo.findText(selected.led_color)
+                    if idx >= 0:
+                        self.led_color_combo.setCurrentIndex(idx)
+                self.led_color_combo.blockSignals(False)
+                self.led_color_combo.currentTextChanged.disconnect()
+                self.led_color_combo.currentTextChanged.connect(self.change_led_color)
+                self.led_color_combo.blockSignals(False)
+                self.selected_led = selected
+            else:
+                self.selected_led = None
 
             # Special handling for Wire
             if type(selected).__name__ == "Wire":
@@ -123,6 +154,7 @@ class PropertiesDock(QDockWidget):
                 led.clicked.connect(lambda: self.toggle_wire_state(selected))
             # Default: show connector LEDs if present
             elif hasattr(selected, "conns"):
+                is_dip_switch = type(selected).__name__.lower() == "dipswitch"
                 for idx, conn in enumerate(selected.conns):
                     conn_name = conn["name"]
                     row = QWidget()
@@ -134,8 +166,9 @@ class PropertiesDock(QDockWidget):
                     row_layout.addWidget(label)
                     self.leds_layout.addWidget(row)
 
-                    # Connect LED click to toggle function
-                    led.clicked.connect(lambda i=idx: self.toggle_connector_state(selected, i))
+                     # Only connect LED click if not a DIP switch
+                    if not is_dip_switch:
+                        led.clicked.connect(lambda i=idx: self.toggle_connector_state(selected, i))
 
         elif selected:
             self.type_label.setText(f"Type: {type(selected).__name__}")
@@ -162,3 +195,12 @@ class PropertiesDock(QDockWidget):
         if hasattr(selected, "state"):
             selected.update_state()
             self.show_controls(True, selected)  # Refresh LED
+
+    def change_led_color(self, color):
+        """Change the color of the currently selected component if it is an LED."""
+        selected_items = self.scene.selectedItems() if self.scene else []
+        if selected_items:
+            selected = selected_items[0]
+            if type(selected).__name__ == "LED" and hasattr(selected, "set_led_color"):
+                selected.set_led_color(color)
+                self.refresh_scene_views()
