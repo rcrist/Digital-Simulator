@@ -4,49 +4,71 @@ from PyQt6.QtGui import *
 
 from GUI.grid import snap_to_grid
 from Components.comp import Comp
+from Components.conn import Conn
 
 class DipSwitch(Comp):
     """ Dip switch with output LED """
-    def __init__(self):
+    def __init__(self, simulator):
         super().__init__()
+        self.simulator = simulator
 
-        self.conns = [
-            {"name": "out", "type": "output", "pos": QPointF(50, 10), "state": False}
-        ]
+        self.conn_out = Conn('output', 'out')
+        self.conn_out.setParentItem(self)
+        self.conn_out.setPos(60, 10)
+
+        self.conns = [self.conn_out]
 
     def boundingRect(self):
         """ Returns the bounding rectangle """
-        return QRectF(0, 0, 50, 20)
+        return QRectF(0, 0, 60, 20)
 
     def paint(self, painter: QPainter, option: QStyleOptionGraphicsItem, widget: QWidget = None):
         """ Paints the Switch component """       
-        # Draw the gate symbol and connectors
-        self.draw_comp_symbol(painter)
-        self.draw_conns(painter)
-
-        # Draw selection outline if selected
-        if option.state & QStyle.StateFlag.State_Selected:
-            self.draw_selection_outline(painter)
-
-    def draw_comp_symbol(self, painter: QPainter) -> None:
-        """ Draws the component symbol (simple switch) """
         # Draw the switch body
-        painter.setBrush(Qt.GlobalColor.darkRed)
-        painter.drawRect(0, 0, 40, 20)
+        painter.setPen(QPen(Qt.GlobalColor.white, 2))
+        painter.setBrush(QBrush(Qt.GlobalColor.darkRed))
+        painter.drawRect(0, 0, 
+                int(self.boundingRect().width()), 
+                int(self.boundingRect().height()))
 
         # Draw the switch positions
-        on_color = Qt.GlobalColor.black if self.conns[0]["state"] else Qt.GlobalColor.white
-        off_color = Qt.GlobalColor.white if self.conns[0]["state"] else Qt.GlobalColor.black
+        on_color = Qt.GlobalColor.white if self.conn_out.state else Qt.GlobalColor.black
+        off_color = Qt.GlobalColor.black if self.conn_out.state else Qt.GlobalColor.white
         painter.setBrush(on_color)
         painter.drawRect(5, 5, 15, 10)
         painter.setBrush(off_color)
         painter.drawRect(20, 5, 15, 10)
 
         # Draw the output LED
-        rad = 3
-        led_color = Qt.GlobalColor.yellow if self.conns[0]["state"] else Qt.GlobalColor.darkYellow
+        led_color = Qt.GlobalColor.yellow if self.conn_out.state else Qt.GlobalColor.darkYellow
         painter.setBrush(QBrush(led_color))
-        painter.drawEllipse(QPointF(45, 10), rad, rad)
+        painter.setPen(QPen(Qt.GlobalColor.white, 1))
+        painter.drawRect(45, 5, 5, 10)
+
+
+    def draw_comp_symbol(self, painter: QPainter) -> None:
+        """ Draws the component symbol (simple switch) """
+       # Draw the switch body
+        painter.setPen(QPen(Qt.GlobalColor.white, 2))
+        painter.setBrush(QBrush(Qt.GlobalColor.darkRed))
+        painter.drawRect(0, 0, 
+                int(self.boundingRect().width()), 
+                int(self.boundingRect().height()))
+
+        # Draw the switch positions
+        on_color = Qt.GlobalColor.white if self.conn_out.state else Qt.GlobalColor.black
+        off_color = Qt.GlobalColor.black if self.conn_out.state else Qt.GlobalColor.white
+        painter.setBrush(on_color)
+        painter.drawRect(5, 5, 15, 10)
+        painter.setBrush(off_color)
+        painter.drawRect(20, 5, 15, 10)
+
+        # Draw the output LED
+        led_color = Qt.GlobalColor.yellow if self.conn_out.state else Qt.GlobalColor.darkYellow
+        painter.setBrush(QBrush(led_color))
+        painter.setPen(QPen(Qt.GlobalColor.white, 1))
+        painter.drawRect(45, 5, 5, 10)
+
 
     def update_state(self, state: bool):
         """ Updates the state of the component with the provided state. """
@@ -54,8 +76,9 @@ class DipSwitch(Comp):
 
     def mousePressEvent(self, event):
         """Toggle the switch state when clicked."""
-        self.conns[0]["state"] = not self.conns[0]["state"]
+        self.conn_out.state = not self.conn_out.state
         self.update()
+        self.simulator.simulate()
         # Update the properties dock LED if available
         main_window = self.scene().views()[0].window() if self.scene().views() else None
         if main_window and hasattr(main_window, "properties_dock"):

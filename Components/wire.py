@@ -84,8 +84,8 @@ class Wire(QGraphicsLineItem):
             return QPointF(snapped_x, snapped_y)
         return super().itemChange(change, value)
     
-    def update_state(self):
-        self.state = not self.state  # Toggle state
+    def update_state(self, state):
+        self.state = state
         self.update()
     
     def to_dict(self):

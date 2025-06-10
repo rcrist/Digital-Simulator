@@ -4,6 +4,7 @@ from PyQt6.QtGui import *
 
 from GUI.grid import snap_to_grid
 from Components.comp import Comp
+from Components.conn import Conn
 
 class LED(Comp):
     """ LED component """
@@ -13,9 +14,11 @@ class LED(Comp):
         self.height = 20
         self.led_color = "yellow"  # Default color
 
-        self.conns = [
-            {"name": "in", "type": "input", "pos": QPointF(0, self.height / 2), "state": False}
-        ]
+        self.conn_in = Conn('input','in')
+        self.conn_in.setParentItem(self)
+        self.conn_in.setPos(0, self.boundingRect().height() / 2)
+
+        self.conns = [self.conn_in]
 
     def boundingRect(self):
         """ Returns the bounding rectangle """
@@ -47,13 +50,13 @@ class LED(Comp):
             "blue": (Qt.GlobalColor.blue, Qt.GlobalColor.darkBlue),
         }
         on_color, off_color = color_map.get(self.led_color, (Qt.GlobalColor.yellow, Qt.GlobalColor.darkYellow))
-        color = on_color if self.conns[0]["state"] else off_color
+        color = on_color if self.conn_in.state else off_color
         painter.setBrush(color)
         painter.drawEllipse(QPointF(self.width/2, self.height/2), rad, rad)
 
     def update_state(self, state: bool):
         """ Updates the state of the component with the provided state. """
-        self.conns[0]["state"] = state
+        self.conn_in.update_state(state)
 
     def set_led_color(self, color: str):
         """ Sets the LED color. """
@@ -61,9 +64,20 @@ class LED(Comp):
             self.led_color = color
             self.update()
 
+    def draw_conns(self, painter: QPainter):
+        for conn in self.conns:
+            if conn.type == "input":
+                painter.setPen(Qt.GlobalColor.green)
+                painter.setBrush(Qt.GlobalColor.green)
+            else:
+                painter.setPen(Qt.GlobalColor.red)
+                painter.setBrush(Qt.GlobalColor.red)
+            painter.drawRect(QRectF(conn.pos().x() - self.c_rad, conn.pos().y() - self.c_rad,
+                             self.c_rad * 2, self.c_rad * 2))
+
     def mousePressEvent(self, event):
         """Toggle the switch state when clicked."""
-        self.update_state(not self.conns[0]["state"])
+        self.update_state(not self.conn_in.state)
         self.update()
         # Update the properties dock LED if available
         main_window = self.scene().views()[0].window() if self.scene().views() else None

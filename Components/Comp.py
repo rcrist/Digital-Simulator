@@ -26,7 +26,6 @@ class Comp(QGraphicsItem):
         painter.drawRect(self.boundingRect())
 
     def draw_conns(self, painter: QPainter):
-        """ Draws the connections for the NOT gate. """
         for conn in self.conns:
             if conn["type"] == "input":
                 painter.setPen(Qt.GlobalColor.green)

@@ -156,11 +156,11 @@ class PropertiesDock(QDockWidget):
             elif hasattr(selected, "conns"):
                 is_dip_switch = type(selected).__name__.lower() == "dipswitch"
                 for idx, conn in enumerate(selected.conns):
-                    conn_name = conn["name"]
+                    conn_name = conn.name
                     row = QWidget()
                     row_layout = QHBoxLayout(row)
                     row_layout.setContentsMargins(0, 0, 0, 0)
-                    led = LEDWidget(state=conn.get("state", False))
+                    led = LEDWidget(state=conn.state)
                     label = QLabel(str(conn_name))
                     row_layout.addWidget(led)
                     row_layout.addWidget(label)

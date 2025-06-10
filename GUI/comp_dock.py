@@ -14,7 +14,7 @@ from Components.led import LED
 
 class ComponentDock(QDockWidget):
     """ Component widget for selecting and displaying components """
-    def __init__(self, parent=None, scene=None):
+    def __init__(self, parent=None, scene=None, simulator=None):
         super().__init__("Properties", parent)
         self.setAllowedAreas(Qt.DockWidgetArea.LeftDockWidgetArea | Qt.DockWidgetArea.RightDockWidgetArea)
         self.setFeatures(QDockWidget.DockWidgetFeature.DockWidgetMovable |
@@ -28,7 +28,8 @@ class ComponentDock(QDockWidget):
         self.setTitleBarWidget(title)
 
         self.scene = scene
-        
+        self.simulator = simulator
+
         self.properties_widget = QWidget()
         self.layout = QVBoxLayout(self.properties_widget)
 
@@ -63,7 +64,7 @@ class ComponentDock(QDockWidget):
             elif gate_type == "Xnor":
                 gate = XnorGate()
             elif gate_type == "Dip Switch":
-                gate = DipSwitch()
+                gate = DipSwitch(self.simulator)
             elif gate_type == "LED":
                 gate = LED()
             else:

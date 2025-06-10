@@ -7,8 +7,7 @@ from GUI.grid_scene import GridScene
 from GUI.properties_dock import PropertiesDock
 from GUI.comp_dock import ComponentDock
 from GUI.menu_bar import MenuBar
-
-from Components.slider_switch import SliderSwitch
+from Control.simulator import Simulator
 
 class MainWindow(QMainWindow):
     """ Main application window for the gate simulator. """
@@ -23,12 +22,14 @@ class MainWindow(QMainWindow):
         self.view.setSceneRect(0, 0, 1400, 600)
         self.setCentralWidget(self.view)
 
+        self.simulator = Simulator(self.scene)
+
         # Create the menu bar
         self.menu_bar = MenuBar(self)
         self.setMenuBar(self.menu_bar)
 
         # Create the component dock
-        self.component_dock = ComponentDock(self, self.scene)
+        self.component_dock = ComponentDock(self, self.scene, self.simulator)
         self.component_dock.setObjectName("ComponentDock")
         self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, self.component_dock)
         self.component_dock.setMinimumWidth(150)
@@ -41,11 +42,6 @@ class MainWindow(QMainWindow):
 
         # Connect selection change to show/hide controls
         self.scene.selectionChanged.connect(self.on_selection_changed)
-
-        # Test component
-        self.test_component = SliderSwitch()
-        self.test_component.setPos(100, 100)
-        self.scene.addItem(self.test_component)
 
     def closeEvent(self, event):
         try:

@@ -1,0 +1,38 @@
+[
+  {
+    "type": "wire",
+    "x1": 120.0,
+    "y1": 130.0,
+    "x2": 200.0,
+    "y2": 130.0,
+    "rotation": 0.0,
+    "pos_x": 0.0,
+    "pos_y": 0.0
+  },
+  {
+    "type": "led",
+    "x": 0.0,
+    "y": 0.0,
+    "width": 20.0,
+    "height": 20.0,
+    "rotation": 0.0,
+    "pos_x": 200.0,
+    "pos_y": 120.0,
+    "conn_states": {
+      "in": false
+    }
+  },
+  {
+    "type": "dip_switch",
+    "x": 0.0,
+    "y": 0.0,
+    "width": 50.0,
+    "height": 20.0,
+    "rotation": 0.0,
+    "pos_x": 70.0,
+    "pos_y": 120.0,
+    "conn_states": {
+      "out": false
+    }
+  }
+]
