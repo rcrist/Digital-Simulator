@@ -12,11 +12,10 @@ class XorGate(Comp):
 
         self.radius = 3
 
-        self.conns = [
-            {"name": "in1", "type": "input", "pos": QPointF(0, 10), "state": False},
-            {"name": "in2", "type": "input", "pos": QPointF(0, 30), "state": False},
-            {"name": "out", "type": "output", "pos": QPointF(50, 20), "state": False}
-        ]
+        self.conn_in1 = self.create_connector('input', 'in1', QPointF(0, 10))
+        self.conn_in2 = self.create_connector('input', 'in2', QPointF(0, 30))
+        self.conn_out = self.create_connector('output', 'out', QPointF(50, 20))
+        self.conns = [self.conn_in1, self.conn_in2,self.conn_out]
 
     def boundingRect(self):
         """ Returns the bounding rectangle """
@@ -69,15 +68,16 @@ class XorGate(Comp):
         painter.setBrush(Qt.BrushStyle.NoBrush)
         painter.drawPath(path)
 
-    def update_state(self):
+    def update(self):
         """ Updates the state of the component based on the inputs """
-        self.conns[2]["state"] = self.conns[0]["state"] != self.conns[1]["state"]
+        self.conns[2].state = self.conns[0].state != self.conns[1].state
+        super().update()
 
     def to_dict(self):
         """ Save file JSON fields for the component """
         pos = self.pos()
         rect = self.boundingRect()
-        conn_states = {conn["name"]: conn["state"] for conn in self.conns}
+        conn_states = {conn.name: conn.state for conn in self.conns}
         return {
             "type": "xor_gate",
             "x": rect.x(),
@@ -99,6 +99,6 @@ class XorGate(Comp):
         # Restore connector states by name if present
         conn_states = data.get("conn_states", {})
         for conn in obj.conns:
-            if conn["name"] in conn_states:
-                conn["state"] = conn_states[conn["name"]]
+            if conn.name in conn_states:
+                conn.state = conn_states[conn.name]
         return obj

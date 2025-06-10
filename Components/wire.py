@@ -5,13 +5,15 @@ from PyQt6.QtGui import *
 from GUI.grid import snap_to_grid
 
 class Wire(QGraphicsLineItem):
-    def __init__(self, x1, y1, x2, y2):
+    def __init__(self, x1, y1, x2, y2, name=None):
         super().__init__(x1, y1, x2, y2)
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsMovable)
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable)
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemSendsGeometryChanges)
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsFocusable)
         self.setCacheMode(QGraphicsItem.CacheMode.DeviceCoordinateCache)
+
+        self.name = name if name else f"Wire_{id(self)}"
 
         self.default_line_color = Qt.GlobalColor.white
         self.line_width = 3

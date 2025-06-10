@@ -17,10 +17,9 @@ class NotGate(Comp):
             QPointF(0, 0),   # Top left
         ]
 
-        self.conns = [
-            {"name": "in", "type": "input", "pos": QPointF(0, 20), "state": False},
-            {"name": "out", "type": "output", "pos": QPointF(40, 20), "state": True}
-        ]
+        self.conn_in1 = self.create_connector('input', 'in1', QPointF(0, 20))
+        self.conn_out = self.create_connector('output', 'out', QPointF(40, 20))
+        self.conns = [self.conn_in1, self.conn_out]
 
     def boundingRect(self):
         """ Returns the bounding rectangle """
@@ -57,15 +56,16 @@ class NotGate(Comp):
         point = self.points[2]  # Right point (output)
         painter.drawEllipse(QPointF(point.x() + self.i_rad, point.y()), self.i_rad, self.i_rad)
 
-    def update_state(self):
+    def update(self):
         """ Updates the state of the NOT gate based on the input. """
-        self.conns[1]["state"] = not self.conns[0]["state"]
+        self.conns[1].state = not self.conns[0].state
+        super().update()
 
     def to_dict(self):
         """ Save file JSON fields for the component """
         pos = self.pos()
         rect = self.boundingRect()
-        conn_states = {conn["name"]: conn["state"] for conn in self.conns}
+        conn_states = {conn.name: conn.state for conn in self.conns}
         return {
             "type": "not_gate",
             "x": rect.x(),
@@ -87,6 +87,6 @@ class NotGate(Comp):
         # Restore connector states by name if present
         conn_states = data.get("conn_states", {})
         for conn in obj.conns:
-            if conn["name"] in conn_states:
-                conn["state"] = conn_states[conn["name"]]
+            if conn.name in conn_states:
+                conn.state = conn_states[conn.name]
         return obj

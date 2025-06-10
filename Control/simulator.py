@@ -4,10 +4,12 @@ class Simulator():
     def __init__(self, scene=None):
         self.scene = scene
         self.connections = []
+        self.num_scans = 3
 
     def simulate(self):
         self.create_connections()
-        self.propagate_signals()   
+        for _ in range(self.num_scans):
+            self.propagate_signals()
 
     def create_connections(self):
         self.connections.clear()  # Clear connections for each simulation run
@@ -39,6 +41,11 @@ class Simulator():
 
         # Then, propagate wire states to input connections
         for wire, comp, conn, conn_type in self.connections:
+            # print(f"Propagating signal from {conn.name} of {comp.__class__.__name__} to wire")
             if conn_type == 'input':
                 conn.update_state(wire.state)
                 comp.update()
+
+    def print_connections(self):
+        for wire, comp, conn, conn_type in self.connections:
+            print(f"Wire: {wire.name}, Component: {comp.__class__.__name__}, Connection: {conn.name}, Type: {conn_type}")

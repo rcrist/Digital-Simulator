@@ -3,6 +3,7 @@ from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 
 from GUI.grid import snap_to_grid
+from Components.conn import Conn
 
 class Comp(QGraphicsItem):
     """ Base class for all components. """
@@ -25,15 +26,21 @@ class Comp(QGraphicsItem):
         painter.setBrush(Qt.BrushStyle.NoBrush)
         painter.drawRect(self.boundingRect())
 
+    def create_connector(self, type=None, name=None, pos=None):
+        conn = Conn(type, name)
+        conn.setParentItem(self)
+        conn.setPos(pos)
+        return conn
+
     def draw_conns(self, painter: QPainter):
         for conn in self.conns:
-            if conn["type"] == "input":
+            if conn.type == "input":
                 painter.setPen(Qt.GlobalColor.green)
                 painter.setBrush(Qt.GlobalColor.green)
             else:
                 painter.setPen(Qt.GlobalColor.red)
                 painter.setBrush(Qt.GlobalColor.red)
-            painter.drawRect(QRectF(conn["pos"].x() - self.c_rad, conn["pos"].y() - self.c_rad,
+            painter.drawRect(QRectF(conn.pos().x() - self.c_rad, conn.pos().y() - self.c_rad,
                              self.c_rad * 2, self.c_rad * 2))
             
     def itemChange(self, change: QGraphicsItem.GraphicsItemChange, value):

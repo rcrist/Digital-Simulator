@@ -4,6 +4,7 @@ from PyQt6.QtGui import *
 
 from GUI.grid import snap_to_grid
 from Components.comp import Comp
+from Components.conn import Conn
 
 class NandGate(Comp):
     """ 2-Input NAND gate digital logic component """
@@ -11,13 +12,11 @@ class NandGate(Comp):
         super().__init__()
 
         self.radius = 3
-        self.i_rad = 4
 
-        self.conns = [
-            {"name": "in1", "type": "input", "pos": QPointF(0, 10), "state": False},
-            {"name": "in2", "type": "input", "pos": QPointF(0, 30), "state": False},
-            {"name": "out", "type": "output", "pos": QPointF(50, 20), "state": False}
-        ]
+        self.conn_in1 = self.create_connector('input', 'in1', QPointF(0, 10))
+        self.conn_in2 = self.create_connector('input', 'in2', QPointF(0, 30))
+        self.conn_out = self.create_connector('output', 'out', QPointF(50, 20))
+        self.conns = [self.conn_in1, self.conn_in2,self.conn_out]
 
     def boundingRect(self):
         """ Returns the bounding rectangle """
@@ -63,15 +62,16 @@ class NandGate(Comp):
         # Draw the invert circle at the output
         painter.drawEllipse(QPointF(40 + self.i_rad, 20), self.i_rad, self.i_rad)
 
-    def update_state(self):
+    def update(self):
         """ Updates the state of the component based on the inputs """
-        self.conns[2]["state"] = not (self.conns[0]["state"] and self.conns[1]["state"])
+        self.conns[2].state = not(self.conns[0].state and self.conns[1].state)
+        super().update()
 
     def to_dict(self):
         """ Save file JSON fields for the component """
         pos = self.pos()
         rect = self.boundingRect()
-        conn_states = {conn["name"]: conn["state"] for conn in self.conns}
+        conn_states = {conn.name: conn.state for conn in self.conns}
         return {
             "type": "nand_gate",
             "x": rect.x(),
@@ -93,6 +93,6 @@ class NandGate(Comp):
         # Restore connector states by name if present
         conn_states = data.get("conn_states", {})
         for conn in obj.conns:
-            if conn["name"] in conn_states:
-                conn["state"] = conn_states[conn["name"]]
+            if conn.name in conn_states:
+                conn.state = conn_states[conn.name]
         return obj
