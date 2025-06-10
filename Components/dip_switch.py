@@ -12,10 +12,7 @@ class DipSwitch(Comp):
         super().__init__()
         self.simulator = simulator
 
-        self.conn_out = Conn('output', 'out')
-        self.conn_out.setParentItem(self)
-        self.conn_out.setPos(60, 10)
-
+        self.conn_out = self.create_connector('output', 'out', QPointF(60, 10))
         self.conns = [self.conn_out]
 
     def boundingRect(self):
@@ -72,7 +69,8 @@ class DipSwitch(Comp):
 
     def update_state(self, state: bool):
         """ Updates the state of the component with the provided state. """
-        self.conns[0]["state"] = state
+        self.conns[0].state = state
+        super().update()
 
     def mousePressEvent(self, event):
         """Toggle the switch state when clicked."""
