@@ -166,10 +166,6 @@ class PropertiesDock(QDockWidget):
                     row_layout.addWidget(label)
                     self.leds_layout.addWidget(row)
 
-                     # Only connect LED click if not a DIP switch
-                    if not is_dip_switch:
-                        led.clicked.connect(lambda i=idx: self.toggle_connector_state(selected, i))
-
         elif selected:
             self.type_label.setText(f"Type: {type(selected).__name__}")
 
@@ -181,14 +177,6 @@ class PropertiesDock(QDockWidget):
                 scene.update()
                 for view in scene.views():
                     view.viewport().update()
-
-    def toggle_connector_state(self, selected, idx):
-        """Toggle the state of the connector and update the LED."""
-        if hasattr(selected, "conns") and 0 <= idx < len(selected.conns):
-            conn = selected.conns[idx]
-            conn["state"] = not conn.get("state", False)
-            selected.update_state()
-            self.show_controls(True, selected)  # Refresh LEDs
 
     def toggle_wire_state(self, selected):
         """Toggle the state of the wire and update the LED."""

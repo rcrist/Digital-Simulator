@@ -1,6 +1,7 @@
 from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
+from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtPrintSupport import QPrinter, QPrintDialog
 import json
 
@@ -17,6 +18,7 @@ from Components.led import LED
 from GUI.grid import set_grid_color
 
 class MenuBar(QMenuBar):
+    themeChanged = pyqtSignal(str)
     def __init__(self, parent=None):
         super().__init__(parent)
 
@@ -54,8 +56,10 @@ class MenuBar(QMenuBar):
 
         if theme_module.is_dark_mode:
             self.apply_dark_theme()
+            self.themeChanged.emit("dark")
         else:
             self.apply_light_theme()
+            self.themeChanged.emit("light")
 
     def apply_dark_theme(self):
         app = QApplication.instance()
@@ -76,6 +80,14 @@ class MenuBar(QMenuBar):
                 color: #fff;
             }
             QDockWidget#PropertiesDock QLabel {
+                background: #000;
+                color: #fff;
+            }
+            QDockWidget#ComponentDock {
+                background: #000;
+                color: #fff;
+            }
+            QDockWidget#ComponentDock QLabel {
                 background: #000;
                 color: #fff;
             }
@@ -104,17 +116,21 @@ class MenuBar(QMenuBar):
             }
             QDockWidget#PropertiesDock {
                 background: #fff;
+                color: #000;
             }
             QDockWidget#PropertiesDock::title {
-                color: #000;
                 background: #fff;
+                color: #000;
             }
             QDockWidget#PropertiesDock * {
+                background: #e1e8e8;
                 color: #000;
-                background: #fff;
             }
-            QSlider {
-                background: transparent;
+            QPushButton {
+                background: #2a82da;
+            }
+            QPushButton:hover {
+                background: #1a5f9c;
             }
             QSlider::groove:horizontal {
                 border: 1px solid #bbb;
@@ -129,6 +145,31 @@ class MenuBar(QMenuBar):
                 margin: -4px 0;
                 border-radius: 7px;
             }
+            QDockWidget#ComponentDock {
+                background: #fff;
+                color: #000;
+            }
+            QDockWidget#ComponentDock * {
+                background: #e1e8e8;
+                color: #000;
+            }
+            QDockWidget#ComponentDock::title {
+                background: #fff;
+                color: #000;
+            }
+            # QDockWidget#ComponentDock QLabel {
+            #     background: #fff;
+            #     color: #000;
+            # }
+            # QDockWidget#ComponentDock QPushButton {
+            #     background: #fff;
+            #     color: #000;
+            # }
+            # QDockWidget#ComponentDock QPushButton:hover {
+            #     background: #000;
+            #     color: #fff;
+            # }
+
         """)
         set_grid_color(QColor(200, 200, 200))  # Set grid color for light mode
         main_window = self.parent()
@@ -299,3 +340,8 @@ class MenuBar(QMenuBar):
             "A simple digital logic simulator.<br>"
             "Created with Python andPyQt6."
         )
+
+    def change_theme(self, theme):
+        # ...your theme changing logic...
+        print(f"Changing theme to: {theme}")
+        self.themeChanged.emit(theme)  # Emit the signal
