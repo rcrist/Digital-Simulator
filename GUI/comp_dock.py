@@ -39,13 +39,13 @@ class ComponentDock(QDockWidget):
         # Gate image buttons (logic gates only) in a 3x3 grid
         self.gate_buttons = {}
         gate_images = {
-            "And": "Digital Simulator Tool/Images/and-gate_32x32_white.png",
-            "Or": "Digital Simulator Tool/Images/or-gate_32x32_white.png",
-            "Not": "Digital Simulator Tool/Images/not-gate_32x32_white.png",
-            "Nand": "Digital Simulator Tool/Images/nand-gate_32x32_white.png",
-            "Nor": "Digital Simulator Tool/Images/nor-gate_32x32_white.png",
-            "Xor": "Digital Simulator Tool/Images/xor-gate_32x32_white.png",
-            "Xnor": "Digital Simulator Tool/Images/xnor-gate_32x32_white.png"
+            "And": "Digital Simulator Tool/Images/and-gate_64x64_blue.png",
+            "Or": "Digital Simulator Tool/Images/or-gate_64x64_blue.png",
+            "Not": "Digital Simulator Tool/Images/not-gate_64x64_blue.png",
+            "Nand": "Digital Simulator Tool/Images/nand-gate_64x64_blue.png",
+            "Nor": "Digital Simulator Tool/Images/nor-gate_64x64_blue.png",
+            "Xor": "Digital Simulator Tool/Images/xor-gate_64x64_blue.png",
+            "Xnor": "Digital Simulator Tool/Images/xnor-gate_64x64_blue.png"
         }
         # Gates
         grid_widget = self.create_image_buttons(gate_images, layout_class=QGridLayout)
@@ -59,7 +59,7 @@ class ComponentDock(QDockWidget):
         # Add input/output components as image buttons below the grid
         switch_images = {
             "Dip Switch": "Digital Simulator Tool/Images/dip_switch_32x32.png",
-            "Slider Switch": "Digital Simulator Tool/Images/slider_switch_32x32_white.png",
+            "Slider Switch": "Digital Simulator Tool/Images/slider_switch_32x32_blue.png",
         }
         # Switches
         switch_widget = self.create_image_buttons(switch_images)
@@ -87,7 +87,7 @@ class ComponentDock(QDockWidget):
         self.layout.addStretch()
         self.setWidget(self.properties_widget)
 
-    def create_image_buttons(self, items, layout_class=QHBoxLayout, icon_size=QSize(32, 32), button_size=QSize(40, 40)):
+    def create_image_buttons(self, items, layout_class=QHBoxLayout, icon_size=QSize(48, 48), button_size=QSize(40, 40)):
         widget = QWidget()
         layout = layout_class(widget)
         layout.setSpacing(8)
@@ -150,22 +150,3 @@ class ComponentDock(QDockWidget):
 
             gate.setPos(100, 100)
             self.scene.addItem(gate)
-
-
-    def set_button_icons(self, color):
-        gate_icon_map = {
-            "And": f"Digital Simulator Tool/Images/and-gate_32x32_{color}.png",
-            "Or": f"Digital Simulator Tool/Images/or-gate_32x32_{color}.png",
-            "Not": f"Digital Simulator Tool/Images/not-gate_32x32_{color}.png",
-            "Nand": f"Digital Simulator Tool/Images/nand-gate_32x32_{color}.png",
-            "Nor": f"Digital Simulator Tool/Images/nor-gate_32x32_{color}.png",
-            "Xor": f"Digital Simulator Tool/Images/xor-gate_32x32_{color}.png",
-            "Xnor": f"Digital Simulator Tool/Images/xnor-gate_32x32_{color}.png"
-        }
-        for name, btn in self.gate_buttons.items():
-            if name in gate_icon_map:
-                btn.setIcon(QIcon(gate_icon_map[name]))
-
-        name = "Slider Switch"
-        slider_switch_icon = f"Digital Simulator Tool/Images/slider_switch_32x32_{color}.png"
-        self.gate_buttons[name].setIcon(QIcon(slider_switch_icon))

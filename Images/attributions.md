@@ -1,5 +1,3 @@
-<a href="https://www.flaticon.com/free-icons/logic-gates" title="Logic gates icons">Logic gates icons created by joalfa - Flaticon</a>
+<a href="https://www.flaticon.com/free-icons/logical" title="logical icons">Logical icons created by IconBaandar - Flaticon</a>
 <a href="https://www.flaticon.com/free-icons/logic-gate" title="logic-gate icons">Logic-gate icons created by verluk - Flaticon</a>
-<a href="https://www.flaticon.com/free-icons/user-interface" title="user interface icons">User interface icons created by jojooid - Flaticon</a>
-<a href="https://www.flaticon.com/free-icons/electrical-component" title="electrical component icons">Electrical component icons created by Payungkead - Flaticon</a>
-<a href="https://www.flaticon.com/free-icons/display" title="display icons">Display icons created by Payungkead - Flaticon</a>
+<a href="https://www.flaticon.com/free-icons/toggle" title="toggle icons">Toggle icons created by Plastic Donut - Flaticon</a>

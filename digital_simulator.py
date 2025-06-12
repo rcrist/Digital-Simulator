@@ -43,10 +43,6 @@ class MainWindow(QMainWindow):
         # Connect selection change to show/hide controls
         self.scene.selectionChanged.connect(self.on_selection_changed)
 
-        # Connect theme change signal if available
-        if hasattr(self.menu_bar, "themeChanged"):
-            self.menu_bar.themeChanged.connect(self.on_theme_changed)
-
     def closeEvent(self, event):
         try:
             self.scene.selectionChanged.disconnect(self.on_selection_changed)
@@ -63,14 +59,6 @@ class MainWindow(QMainWindow):
             except RuntimeError:
                 # Scene has been deleted, ignore
                 pass
-
-    def on_theme_changed(self, theme):
-        """
-        Update component dock button images based on theme.
-        Expects 'theme' to be 'light' or 'dark'.
-        """
-        color = "blue" if theme == "light" else "white"
-        self.component_dock.set_button_icons(color)
 
 if __name__ == "__main__":
     """ Main entry point for the application. """
