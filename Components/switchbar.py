@@ -4,7 +4,6 @@ from PyQt6.QtGui import *
 
 from GUI.grid import snap_to_grid
 from Components.comp import Comp
-from Components.conn import Conn
 
 class Switchbar(Comp):
     """ Switchbar component with multiple switches """

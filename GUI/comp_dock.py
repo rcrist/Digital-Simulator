@@ -17,6 +17,7 @@ from Components.seven_segment import SevenSegment
 from Components.clock import Clock
 from Components.switchbar import Switchbar
 from Components.ledbar import Ledbar
+from ICs.SN7408 import SN7408
 
 class ComponentDock(QDockWidget):
     """ Component widget for selecting and displaying components """
@@ -35,6 +36,7 @@ class ComponentDock(QDockWidget):
 
         self.scene = scene
         self.simulator = simulator
+        self.library_images = {}
 
         self.properties_widget = QWidget()
         self.layout = QVBoxLayout(self.properties_widget)
@@ -63,7 +65,7 @@ class ComponentDock(QDockWidget):
         switch_images = {
             "Dip Switch": "Digital Simulator Tool/Images/dip_switch_32x32.png",
             "Slider Switch": "Digital Simulator Tool/Images/slider_switch_32x32_blue.png",
-            "Clock": "Digital Simulator Tool/Images/clock_32x32_gray.png",
+            "Clock": "Digital Simulator Tool/Images/clock_32x32.png",
             "Switchbar": "Digital Simulator Tool/Images/switchbar_32x32.png"
         }
         # Switches
@@ -90,6 +92,15 @@ class ComponentDock(QDockWidget):
         library_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
         self.layout.addWidget(library_label)
 
+        self.library_images = {
+            "SN7400": "Digital Simulator Tool/Images/integrated-circuit_32x32.png",
+            "SN7402": "Digital Simulator Tool/Images/integrated-circuit_32x32.png",
+            "SN7408": "Digital Simulator Tool/Images/integrated-circuit_32x32.png",
+        }
+
+        library_widget = self.create_image_buttons(self.library_images, layout_class=QGridLayout)
+        self.layout.addWidget(library_widget)
+
         self.layout.addStretch()
         self.setWidget(self.properties_widget)
 
@@ -98,7 +109,40 @@ class ComponentDock(QDockWidget):
         layout = layout_class(widget)
         layout.setSpacing(8)
         layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
-        if layout_class == QGridLayout:
+
+        if (items == self.library_images):
+            layout.setSpacing(0)
+            row, col = 0, 0
+            for idx, (name, img_path) in enumerate(items.items()):
+                # Create button with image
+                btn = QPushButton()
+                btn.setIcon(QIcon(img_path))
+                btn.setIconSize(icon_size)
+                btn.setToolTip(name)
+                btn.setFixedSize(button_size)
+                btn.clicked.connect(lambda checked=False, g=name: self.add_gate(g))
+                self.gate_buttons[name] = btn
+
+                # Create label with component name
+                name_label = QLabel(name)
+                name_label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+
+                # Create a vertical layout for button + label
+                vbox = QVBoxLayout()
+                vbox.setContentsMargins(0, 0, 6, 0)
+                vbox.addWidget(btn)
+                vbox.addWidget(name_label)
+
+                # Create a container widget for the vbox
+                container = QWidget()
+                container.setLayout(vbox)
+
+                layout.addWidget(container, row, col)
+                col += 1
+                if col >= 3:
+                    col = 0
+                    row += 1
+        else:
             row, col = 0, 0
             for idx, (name, img_path) in enumerate(items.items()):
                 btn = QPushButton()
@@ -113,6 +157,7 @@ class ComponentDock(QDockWidget):
                 if col >= 3:
                     col = 0
                     row += 1
+
         return widget
 
     def add_gate(self, gate_type):
@@ -147,6 +192,8 @@ class ComponentDock(QDockWidget):
                 gate = Switchbar(self.simulator)
             elif gate_type == "Ledbar":
                 gate = Ledbar()
+            elif gate_type == "SN7408":
+                gate = SN7408()
             else:
                 return
 
