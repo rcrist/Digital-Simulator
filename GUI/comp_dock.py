@@ -15,6 +15,8 @@ from Components.slider_switch import SliderSwitch
 from Components.led import LED
 from Components.seven_segment import SevenSegment
 from Components.clock import Clock
+from Components.switchbar import Switchbar
+from Components.ledbar import Ledbar
 
 class ComponentDock(QDockWidget):
     """ Component widget for selecting and displaying components """
@@ -62,9 +64,10 @@ class ComponentDock(QDockWidget):
             "Dip Switch": "Digital Simulator Tool/Images/dip_switch_32x32.png",
             "Slider Switch": "Digital Simulator Tool/Images/slider_switch_32x32_blue.png",
             "Clock": "Digital Simulator Tool/Images/clock_32x32_gray.png",
+            "Switchbar": "Digital Simulator Tool/Images/switchbar_32x32.png"
         }
         # Switches
-        switch_widget = self.create_image_buttons(switch_images)
+        switch_widget = self.create_image_buttons(switch_images, layout_class=QGridLayout)
         self.layout.addWidget(switch_widget)
 
         # Label for Displays
@@ -75,10 +78,11 @@ class ComponentDock(QDockWidget):
         # Add display components as image buttons below the switches
         display_images = {
             "LED": "Digital Simulator Tool/Images/led_32x32.png",
+            "Ledbar": "Digital Simulator Tool/Images/ledbar_32x32.png",
             "Seven Segment": "Digital Simulator Tool/Images/seven-segment.png"
         }
 
-        display_widget = self.create_image_buttons(display_images)
+        display_widget = self.create_image_buttons(display_images, layout_class=QGridLayout)
         self.layout.addWidget(display_widget)
 
         # Label for Circuit Library
@@ -109,16 +113,6 @@ class ComponentDock(QDockWidget):
                 if col >= 3:
                     col = 0
                     row += 1
-        else:
-            for name, img_path in items.items():
-                btn = QPushButton()
-                btn.setIcon(QIcon(img_path))
-                btn.setIconSize(icon_size)
-                btn.setToolTip(name)
-                btn.setFixedSize(button_size)
-                btn.clicked.connect(lambda checked=False, g=name: self.add_gate(g))
-                layout.addWidget(btn)
-                self.gate_buttons[name] = btn
         return widget
 
     def add_gate(self, gate_type):
@@ -149,6 +143,10 @@ class ComponentDock(QDockWidget):
                 gate = SevenSegment()
             elif gate_type == "Clock":
                 gate = Clock(self.simulator)
+            elif gate_type == "Switchbar":
+                gate = Switchbar(self.simulator)
+            elif gate_type == "Ledbar":
+                gate = Ledbar()
             else:
                 return
 

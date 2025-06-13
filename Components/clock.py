@@ -13,6 +13,7 @@ class Clock(Comp):
         self.simulator = simulator
         self.toggle_timer = None
         self.is_toggling = False
+        self.frequency = 1  # Default frequency in Hz
 
         self.conn_out = self.create_connector('output', 'out', QPointF(50, 20))
         self.conns = [self.conn_out]
@@ -88,7 +89,7 @@ class Clock(Comp):
         """ Start toggling the clock output state at regular intervals. """
         self.toggle_timer = QTimer()
         self.toggle_timer.timeout.connect(self.toggle_output)
-        self.toggle_timer.start(1000)
+        self.toggle_timer.start(int(1000 / (2 * self.frequency)))  # Toggle every half period
 
     def toggle_output(self):
         """ Toggle the clock output state. """

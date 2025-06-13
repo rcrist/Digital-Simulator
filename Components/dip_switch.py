@@ -66,7 +66,6 @@ class DipSwitch(Comp):
         painter.setPen(QPen(Qt.GlobalColor.white, 1))
         painter.drawRect(45, 5, 5, 10)
 
-
     def update_state(self, state: bool):
         """ Updates the state of the component with the provided state. """
         self.conns[0].state = state
