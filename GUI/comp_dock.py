@@ -14,6 +14,7 @@ from Components.dip_switch import DipSwitch
 from Components.slider_switch import SliderSwitch
 from Components.led import LED
 from Components.seven_segment import SevenSegment
+from Components.clock import Clock
 
 class ComponentDock(QDockWidget):
     """ Component widget for selecting and displaying components """
@@ -60,6 +61,7 @@ class ComponentDock(QDockWidget):
         switch_images = {
             "Dip Switch": "Digital Simulator Tool/Images/dip_switch_32x32.png",
             "Slider Switch": "Digital Simulator Tool/Images/slider_switch_32x32_blue.png",
+            "Clock": "Digital Simulator Tool/Images/clock_32x32_gray.png",
         }
         # Switches
         switch_widget = self.create_image_buttons(switch_images)
@@ -145,6 +147,8 @@ class ComponentDock(QDockWidget):
                 gate = LED()
             elif gate_type == "Seven Segment":
                 gate = SevenSegment()
+            elif gate_type == "Clock":
+                gate = Clock(self.simulator)
             else:
                 return
 
